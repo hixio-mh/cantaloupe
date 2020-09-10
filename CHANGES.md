@@ -1,14 +1,60 @@
 # Change Log
 
+## 4.1.7
+
+* Fixed a `NumberFormatException` caused by incorrect Java version parsing when
+  running in a beta or early-access JVM.
+* Fixed an `IOException` appearing in the log at the conclusion of a successful
+  request involving HttpSource when chunking is enabled.
+* Fixed a `NullPointerException` when returning `nil` from the `overlay()`
+  delegate method. (Thanks to @ccare)
+* Fixed an error from the embedded Jetty server when trying to use a key store
+  with multiple certificates.
+
+## 4.1.6
+
+* Image information is no longer included in IIIF information responses with
+  an HTTP 403 status.
+* Fixed overridden boolean values not being recognized in inherited
+  configuration files.
+* Fixed information responses failing to respect the `page` URL query argument.
+* Fixed a bug that caused requests for data beyond an offset of 2^31 from
+  S3Source and AzureStorageSource to fail when chunking is enabled.
+* Updated JRuby to version 9.2.11.1, which addresses multiple CVEs.
+* Updated Jackson to version 2.11.0, which addresses multiple CVEs.
+
+## 4.1.5
+
+* Fixed the IIIF Image API 2.x endpoint's handling of identifiers containing
+  backslashes.
+* Fixed a potential NullPointerException thrown by various
+  AbstractIIOImageReader methods resulting from improper exception handling.
+* Improved the user-friendliness of error messages resulting from illegal
+  quality and format arguments in image requests.
+* Reduced an error-level log statement resulting from an exception while
+  streaming from a derivative cache to the response to debug-level.
+* Jetty has been upgraded to version 9.4.24.v20191120, which addresses
+  multiple CVEs.
+
 ## 4.1.4
 
 * Fixed the health-check endpoint (at `/health`).
+* Fixed error responses when encountering empty request headers. (Thanks to
+  @RRMoelker)
 * Fixed incorrect URIs in `Link` header values in certain IIIF Image API v2
   image endpoint responses.
+* The `?response-content-disposition` query argument correctly handles
+  filenames containing spaces.
+* Image endpoints return HTTP 403 instead of 500 in response to
+  AccessDeniedExceptions from the underlying Source.
 * Fixed two separate bugs in KakaduNativeProcessor that both caused empty
   regions to appear in certain images.
+* Fixed overly restrictive signature verification in KakaduDemoProcessor and
+  OpenJpegProcessor that could cause errors with some valid images.
 * Fixed TurboJpegProcessor not respecting the `processor.background_color`
   configuration key.
+* Fixed the `PurgeItemFromCache` API method not working with S3Cache and
+  AzureStorageCache.
 * When using `AutomaticSelectionStrategy`, processor initialization errors are
   logged at debug-level rather than error-level.
 
@@ -30,8 +76,8 @@
   for which chunking is enabled.
 * The Jetty client used by HttpSource has been downgraded to the version used
   in 4.1.1 due to a bug in the version used in 4.1.2.
-* Fixed the behavior of the print_stack_trace_on_error_pages configuration key
-  in the context of certain unrecoverable errors.
+* Fixed the behavior of the `print_stack_trace_on_error_pages` configuration
+  key in the context of certain unrecoverable errors.
 
 ## 4.1.2
 

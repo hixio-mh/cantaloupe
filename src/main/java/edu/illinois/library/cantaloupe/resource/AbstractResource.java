@@ -79,6 +79,12 @@ public abstract class AbstractResource {
      */
     private Identifier identifier;
 
+    private static String safeContentDispositionFilename(Identifier identifier,
+                                                         Format outputFormat) {
+        return identifier.toString().replaceAll(StringUtils.ASCII_FILENAME_REGEX, "_") +
+                "." + outputFormat.getPreferredExtension();
+    }
+
     /**
      * <p>Initialization method, called after all necessary setters have been
      * called but before any request-handler method (like {@link #doGET()}
@@ -221,15 +227,31 @@ public abstract class AbstractResource {
     }
 
     /**
-     * Uses an {@link Authorizer} to determine how to respond to the request.
-     * The response will be modified if necessary.
+     * <p>Uses an {@link Authorizer} to determine how to respond to the
+     * request. The response is modified if necessary.</p>
      *
-     * @return Whether authorization was successful. {@literal false} indicates
-     *         a redirect, and client code should abort.
+     * <p>The authorization system (rooted in the {@link
+     * edu.illinois.library.cantaloupe.script.DelegateMethod#AUTHORIZE
+     * authorization delegate method} supports simple boolean authorization
+     * which maps to the HTTP 200 and 403 statuses. In the event of a 403,
+     * IIIF image information should not be included in the response body.</p>
+     *
+     * <p>Authorization can simultaneously be used in the context of the
+     * <a href="https://iiif.io/api/auth/1.0/">IIIF Authentication API, where
+     * it works a little differently. Here, HTTP 401 is returned instead of
+     * 403, and the response body <strong>does</strong> include image
+     * information. (See
+     * <a href="https://iiif.io/api/auth/1.0/#interaction-with-access-controlled-resources">
+     * Interaction with Access-Controlled Resources</a>. This means that IIIF
+     * information endpoints should swallow any {@link ResourceException}s with
+     * HTTP 401 status.</p>
+     *
+     * @return Whether authorization was successful. {@code false} indicates a
+     *         redirect, and client code should abort.
      * @throws IOException if there was an I/O error while checking
-     *                     authorization.
+     *         authorization.
      * @throws ResourceException if authorization resulted in an HTTP 400-level
-     *                           response.
+     *         response.
      */
     protected final boolean authorize() throws IOException, ResourceException {
         final Authorizer authorizer =
@@ -585,43 +607,40 @@ public abstract class AbstractResource {
                 throw new RuntimeException(e);
             }
             if (queryArg.startsWith("inline")) {
-                disposition = "inline; filename=" +
-                        getContentDispositionFilename(identifier, outputFormat);
+                disposition = "inline; filename=\"" +
+                        safeContentDispositionFilename(identifier, outputFormat) + "\"";
             } else if (queryArg.startsWith("attachment")) {
-                Pattern pattern = Pattern.compile(".*filename=\"?(.*)\"?.*");
+                Pattern pattern = Pattern.compile(".*filename=\"?([^\"]*)\"?.*");
                 Matcher m = pattern.matcher(queryArg);
                 String filename;
                 if (m.matches()) {
-                    // Filter out filename-unsafe characters as well as ".."
-                    filename = StringUtils.sanitize(m.group(1),
+                    // Filter out filename-unsafe characters as well as "..".
+                    // Some browsers don't allow spaces in Content-Disposition
+                    // filenames, so use underscore instead.
+                    filename = StringUtils.sanitize(
+                            m.group(1),
                             Pattern.compile("\\.\\."),
-                            Pattern.compile(StringUtils.FILENAME_REGEX));
+                            Pattern.compile(StringUtils.ASCII_FILENAME_REGEX));
                 } else {
-                    filename = getContentDispositionFilename(identifier,
+                    filename = safeContentDispositionFilename(identifier,
                             outputFormat);
                 }
-                disposition = "attachment; filename=" + filename;
+                disposition = "attachment; filename=\"" + filename + "\"";
             }
         } else {
             switch (Configuration.getInstance()
                     .getString(Key.IIIF_CONTENT_DISPOSITION, "none")) {
                 case "inline":
-                    disposition = "inline; filename=" +
-                            getContentDispositionFilename(identifier, outputFormat);
+                    disposition = "inline; filename=\"" +
+                            safeContentDispositionFilename(identifier, outputFormat) + "\"";
                     break;
                 case "attachment":
-                    disposition = "attachment; filename=" +
-                            getContentDispositionFilename(identifier, outputFormat);
+                    disposition = "attachment; filename=\"" +
+                            safeContentDispositionFilename(identifier, outputFormat) + "\"";
                     break;
             }
         }
         return disposition;
-    }
-
-    private String getContentDispositionFilename(Identifier identifier,
-                                                 Format outputFormat) {
-        return identifier.toString().replaceAll(StringUtils.FILENAME_REGEX, "_") +
-                "." + outputFormat.getPreferredExtension();
     }
 
     /**

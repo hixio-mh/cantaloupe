@@ -56,8 +56,26 @@ public class ParametersTest extends BaseTest {
         Parameters.fromUri("bla/20,20,50,50/pct:90/15/bitonal");
     }
 
+    @Test
+    public void testCopyConstructor() {
+        Parameters copy = new Parameters(instance);
+        assertEquals(copy.getIdentifier(), instance.getIdentifier());
+        assertEquals(copy.getRegion(), instance.getRegion());
+        assertEquals(copy.getSize(), instance.getSize());
+        assertEquals(copy.getRotation(), instance.getRotation());
+        assertEquals(copy.getQuality(), instance.getQuality());
+        assertEquals(copy.getOutputFormat(), instance.getOutputFormat());
+        assertEquals(copy.getQuery(), instance.getQuery());
+    }
+
+    @Test(expected = IllegalClientArgumentException.class)
+    public void testConstructor3WithIllegalQuality() {
+        new Parameters(new Identifier("identifier"), "0,0,200,200", "pct:50",
+                "5", "bogus", "jpg");
+    }
+
     @Test(expected = UnsupportedOutputFormatException.class)
-    public void testConstructorThrowsUnsupportedOutputFormatException() {
+    public void testConstructor3WithIllegalFormat() {
         new Parameters(new Identifier("identifier"), "0,0,200,200", "pct:50",
                 "5", "default", "bogus");
     }

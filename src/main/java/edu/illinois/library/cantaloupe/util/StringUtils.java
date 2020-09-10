@@ -3,6 +3,7 @@ package edu.illinois.library.cantaloupe.util;
 import edu.illinois.library.cantaloupe.config.Configuration;
 import edu.illinois.library.cantaloupe.config.Key;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 
 public final class StringUtils {
 
-    public static final String FILENAME_REGEX = "[^A-Za-z0-9._-]";
+    public static final String ASCII_FILENAME_REGEX = "[^A-Za-z0-9\\-._ ]";
 
     /**
      * Some web servers have issues dealing with encoded slashes ({@literal
@@ -63,7 +64,6 @@ public final class StringUtils {
     }
 
     /**
-     * @param d
      * @return String representation of the given number with trailing zeroes
      *         removed.
      */
@@ -74,11 +74,8 @@ public final class StringUtils {
     }
 
     /**
-     * Recursively filters out {@literal removeables} from the given dirty
-     * string.
+     * Recursively filters out {@code removeables} from the given dirty string.
      *
-     * @param dirty
-     * @param removeables
      * @return Sanitized string.
      */
     public static String sanitize(String dirty, final String... removeables) {
@@ -92,14 +89,13 @@ public final class StringUtils {
     }
 
     /**
-     * Recursively filters out {@literal removeables} from the given dirty
-     * string.
+     * Recursively filters out {@code removeables} from the given dirty string,
+     * replacing it with {@code replacement}.
      *
-     * @param dirty
-     * @param removeables
      * @return Sanitized string.
      */
-    public static String sanitize(String dirty, final Pattern... removeables) {
+    public static String sanitize(String dirty,
+                                  final Pattern... removeables) {
         for (Pattern toRemove : removeables) {
             Matcher matcher = toRemove.matcher(dirty);
             if (matcher.find()) {
@@ -149,7 +145,11 @@ public final class StringUtils {
      * @return Boolean value of the given string.
      * @throws NumberFormatException if the string has an unrecognized format.
      */
-    public static boolean toBoolean(String str) {
+    public static boolean toBoolean(@Nullable String str) {
+        if (str == null) {
+            throw new NumberFormatException();
+        }
+
         switch (str) {
             case "1":
             case "true":

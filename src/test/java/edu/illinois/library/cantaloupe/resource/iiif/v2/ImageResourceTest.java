@@ -213,19 +213,20 @@ public class ImageResourceTest extends ResourceTest {
     @Test
     public void testGETContentDispositionHeaderSetToAttachmentWithFilenameInQuery()
             throws Exception {
-        final String filename = "cats.jpg";
+        final String filename = "cats%20dogs.jpg";
+        final String expected = "cats dogs.jpg";
 
         URI uri = getHTTPURI("/" + IMAGE + "/full/full/0/color.jpg?response-content-disposition=attachment;filename%3D%22" + filename + "%22");
-        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, filename);
+        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, expected);
 
         uri = getHTTPURI("/" + IMAGE + "/full/full/0/color.jpg?response-content-disposition=attachment;%20filename%3D%22" + filename + "%22");
-        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, filename);
+        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, expected);
 
         uri = getHTTPURI("/" + IMAGE + "/full/full/0/color.jpg?response-content-disposition=attachment;filename%3D" + filename);
-        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, filename);
+        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, expected);
 
         uri = getHTTPURI("/" + IMAGE + "/full/full/0/color.jpg?response-content-disposition=attachment;%20filename%3D" + filename);
-        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, filename);
+        tester.testContentDispositionHeaderSetToAttachmentWithFilenameInQuery(uri, expected);
     }
 
     @Test
@@ -242,6 +243,18 @@ public class ImageResourceTest extends ResourceTest {
         config.setProperty(Key.IIIF_2_ENDPOINT_ENABLED, false);
 
         assertStatus(403, getHTTPURI("/" + IMAGE + "/full/full/0/color.jpg"));
+    }
+
+    @Test
+    public void testGETWithForwardSlashInIdentifier() {
+        URI uri = getHTTPURI("/subfolder%2Fjpg/full/max/0/color.jpg");
+        tester.testForwardSlashInIdentifier(uri);
+    }
+
+    @Test
+    public void testGETWithBackslashInIdentifier() {
+        URI uri = getHTTPURI("/subfolder%5Cjpg/full/max/0/color.jpg");
+        tester.testBackslashInIdentifier(uri);
     }
 
     @Test
@@ -372,6 +385,12 @@ public class ImageResourceTest extends ResourceTest {
     public void testGETMaxPixelsIgnoredWhenStreamingSource() {
         URI uri = getHTTPURI("/" + IMAGE + "/full/full/0/color.jpg");
         tester.testMaxPixelsIgnoredWhenStreamingSource(uri);
+    }
+
+    @Test
+    public void testGETForbidden() {
+        URI uri = getHTTPURI("/forbidden/full/full/0/color.jpg");
+        tester.testForbidden(uri);
     }
 
     @Test

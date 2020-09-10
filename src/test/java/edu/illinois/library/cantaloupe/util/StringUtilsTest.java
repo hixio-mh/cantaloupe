@@ -7,7 +7,10 @@ import org.junit.Test;
 
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class StringUtilsTest extends BaseTest {
 
@@ -51,18 +54,18 @@ public class StringUtilsTest extends BaseTest {
     }
 
     @Test
-    public void testSanitizeWithStrings() {
-        assertEquals("", StringUtils.sanitize("dirt", "dirt"));
-        assertEquals("y", StringUtils.sanitize("dirty", "dirt"));
-        assertEquals("dirty", StringUtils.sanitize("dir1ty", "1"));
+    public void testSanitize1() {
+        assertEquals("", StringUtils.sanitize("dirt", "dirt", "dirt"));
+        assertEquals("y", StringUtils.sanitize("dirty", "dirt", "dirt"));
+        assertEquals("dirty", StringUtils.sanitize("dir1ty", "1", "1"));
 
         // test injection
-        assertEquals("", StringUtils.sanitize("cacacatststs", "cats"));
-        assertEquals("", StringUtils.sanitize("cadocadogstsgsts", "cats", "dogs"));
+        assertEquals("", StringUtils.sanitize("cacacatststs", "cats", "cats"));
+        assertEquals("", StringUtils.sanitize("cadocadogstsgsts", "cats", "dogs", "foxes"));
     }
 
     @Test
-    public void testSanitizeWithPatterns() {
+    public void testSanitize2() {
         assertEquals("", StringUtils.sanitize("dirt", Pattern.compile("dirt")));
         assertEquals("y", StringUtils.sanitize("dirty", Pattern.compile("dirt")));
         assertEquals("dirty", StringUtils.sanitize("dir1ty", Pattern.compile("1")));
@@ -106,6 +109,11 @@ public class StringUtilsTest extends BaseTest {
 
         toStrip = "longer than str";
         assertSame(str, StringUtils.stripStart(str, toStrip));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testToBooleanWithNullValueThrowsException() {
+        StringUtils.toBoolean(null);
     }
 
     @Test(expected = NumberFormatException.class)

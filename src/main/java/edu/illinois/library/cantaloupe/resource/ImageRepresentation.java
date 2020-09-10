@@ -91,8 +91,9 @@ public class ImageRepresentation implements Representation {
                 return;
             }
         } catch (IOException e) {
-            LOGGER.error("Failed to read from {}: {}",
-                    cache.getClass().getSimpleName(), e.getMessage(), e);
+            LOGGER.debug("Error while streaming from {} to the response: {}",
+                    cache.getClass().getSimpleName(),
+                    e.getMessage());
             // It may still be possible to fulfill the request.
             copyOrProcess(responseOS);
             return;
@@ -117,6 +118,8 @@ public class ImageRepresentation implements Representation {
                     "cache simultaneously");
             copyOrProcess(teeOS);
         } catch (Throwable t) {
+            LOGGER.debug("write(): {}", t.getMessage(), t);
+
             // The cached image has been incompletely written and is corrupt,
             // so it must be purged.
             cacheFacade.purge(opList);

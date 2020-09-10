@@ -103,6 +103,10 @@ public class ApplicationServer {
         final WebAppContext context = new WebAppContext();
         context.setContextPath("/");
 
+        // Disable directory listing.
+        context.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed",
+                "false");
+
         // Jetty will extract the app into a temp directory that is, by
         // default, the same as java.io.tmpdir. The OS may periodically clean
         // out this directory, which will cause havoc if it happens while the
@@ -112,16 +116,12 @@ public class ApplicationServer {
         context.setAttribute("org.eclipse.jetty.webapp.basetempdir",
                 Application.getTempPath().toString());
 
-        // Disable directory listing.
-        context.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed",
-                "false");
-
         // We also set it to NOT persist to avoid accumulating a bunch of
         // stale exploded apps.
         // N.B.: WebAppContext.setPersistTempDirectory() is supposed to be the
         // way to accomplish this, but testing indicates that it does not work
         // reliably as of Jetty 9.4.9.v20180320, after sending either SIGINT
-        // or SIGTERM. So, instead, we will use a shutdown hook.
+        // or SIGTERM. So, we will do it ourselves in a shutdown hook instead.
         // See: http://www.eclipse.org/jetty/documentation/current/ref-temporary-directories.html#_setting_a_specific_temp_directory
         //context.setPersistTempDirectory(false);
         if (!"true".equals(System.getProperty(Application.TEST_VM_ARGUMENT))) {
@@ -301,7 +301,7 @@ public class ApplicationServer {
                 config.setSecurePort(getHTTPSPort());
                 config.addCustomizer(new SecureRequestCustomizer());
 
-                final SslContextFactory contextFactory = new SslContextFactory();
+                final SslContextFactory contextFactory = new SslContextFactory.Server();
                 contextFactory.setKeyStorePath(getHTTPSKeyStorePath());
                 contextFactory.setKeyStorePassword(getHTTPSKeyStorePassword());
                 contextFactory.setKeyManagerPassword(getHTTPSKeyPassword());

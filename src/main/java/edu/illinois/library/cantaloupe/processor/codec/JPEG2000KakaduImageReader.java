@@ -126,6 +126,13 @@ public final class JPEG2000KakaduImageReader implements AutoCloseable {
 
     }
 
+    /**
+     * N.B.: it might be better to extend {@link
+     * kdu_jni.Kdu_thread_safe_message} instead, but there is apparently some
+     * kind of bug up through Kakadu 8.0.3 (at least) that causes it to not
+     * work right. (See
+     * https://github.com/cantaloupe-project/cantaloupe/issues/396)
+     */
     private static abstract class AbstractKduMessage extends Kdu_message {
 
         final StringBuilder builder = new StringBuilder();
