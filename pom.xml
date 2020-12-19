@@ -100,7 +100,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.5.1</version>
+            <version>3.14.0</version>
         </dependency>
         <!-- Used by JdbcSourceTest and JdbcCacheTest -->
         <dependency>
