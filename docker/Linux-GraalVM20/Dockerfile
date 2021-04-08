@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:rolling
 
 ENV JAVA_HOME=/opt/graalvm-ce-java11-20.1.0
 ENV GRAALVM_HOME=/opt/graalvm-ce-java11-20.1.0
