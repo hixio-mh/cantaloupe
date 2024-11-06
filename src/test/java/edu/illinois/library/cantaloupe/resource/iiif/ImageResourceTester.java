@@ -475,7 +475,7 @@ public class ImageResourceTester extends ImageAPIResourceTester {
     /**
      * When an image is requested with crop area of {@code regionWidth * regionHeight} with {@code max}
      * and the source image is larger than {@link Key#MAX_PIXELS}, it should be downscaled to {@link
-     * Key#MAX_PIXELS} only if the crop size exceeds that limit.
+     * Key#MAX_PIXELS} only if the crop size exceedes that limit.
      *
      * @param originalWidth  Source (or post-crop if cropped) image width.
      * @param originalHeight Source (or post-crop if cropped) image height.
