@@ -424,6 +424,26 @@ public class ImageResourceTest extends ResourceTest {
         URI uri = getHTTPURI("/" + IMAGE + "/full/max/0/color.png");
         tester.testDownscalingToMaxPixels(uri, 64, 56, 1000);
     }
+    @Test
+    void testGETPixelRegionLessThanMaxPixelsWithMaxSizeArgument() throws Exception {
+        URI uri = getHTTPURI("/" + IMAGE + "/0,0,10,10/max/0/color.png");
+        tester.testRegionToMaxPixels(uri, 64, 56, 10,10, 1000);
+    }
+    @Test
+    void testGETPercentRegionLessThanMaxPixelsWithMaxSizeArgument() throws Exception {
+        URI uri = getHTTPURI("/" + IMAGE + "/pct:0,0,25,25/max/0/color.png");
+        tester.testRegionToMaxPixels(uri, 64, 56, 16,14, 1000);
+    }
+    @Test
+    void testGETPixelRegionMoreThanMaxPixelsWithMaxSizeArgument() throws Exception {
+        URI uri = getHTTPURI("/" + IMAGE + "/0,0,50,50/max/0/color.png");
+        tester.testRegionToMaxPixels(uri, 64, 56, 50,50, 1000);
+    }
+    @Test
+    void testGETPercentRegionMoreThanMaxPixelsWithMaxSizeArgument() throws Exception {
+        URI uri = getHTTPURI("/" + IMAGE + "/pct:0,0,75,75/max/0/color.png");
+        tester.testRegionToMaxPixels(uri, 64, 56, 48,42, 1000);
+    }
 
     @Test
     void testGETForbidden() {
