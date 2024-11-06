@@ -10,6 +10,7 @@ import edu.illinois.library.cantaloupe.image.Metadata;
 import edu.illinois.library.cantaloupe.image.Orientation;
 import edu.illinois.library.cantaloupe.operation.OperationList;
 import edu.illinois.library.cantaloupe.operation.Scale;
+import edu.illinois.library.cantaloupe.operation.ValidationException;
 import edu.illinois.library.cantaloupe.processor.Processor;
 import edu.illinois.library.cantaloupe.resource.IllegalClientArgumentException;
 import edu.illinois.library.cantaloupe.resource.Route;
@@ -95,12 +96,16 @@ public class ImageResource extends IIIF2Resource {
             @Override
             public void infoAvailable(Info info) {
                 if (Size.ScaleMode.MAX.equals(params.getSize().getScaleMode())) {
-                    constrainSizeToMaxPixels(info.getSize(), ops);
+                    try {
+                        constrainSizeToMaxPixels(info.getSize(), ops);
+                    } catch (ValidationException e) {
+                        throw new IllegalClientArgumentException(e.getMessage(), e);
+                    }
                 }
                 try {
                     enqueueHeaders(params, info.getSize(pageIndex), disposition);
                 } catch (IndexOutOfBoundsException e) {
-                    throw new IllegalClientArgumentException(e);
+                    throw new IllegalClientArgumentException(e.getMessage(), e);
                 }
             }
 
