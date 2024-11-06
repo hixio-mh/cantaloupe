@@ -33,14 +33,17 @@ public abstract class IIIFResource extends PublicResource {
                                             OperationList opList) {
         final var config    = Configuration.getInstance();
         final int maxPixels = config.getInt(Key.MAX_PIXELS, 0);
-        if (maxPixels > 0 && requestedSize.intArea() > maxPixels) {
+        // This ensures we compare maxPixels against the Resulting size 
+        // after operations like cropping/region are applied.
+        Dimension CalculatedDimension = opList.getResultingSize(requestedSize);
+        if (maxPixels > 0 && CalculatedDimension.intArea() > maxPixels) {
             Scale scaleOp = (Scale) opList.getFirst(Scale.class);
             // This should be null because the client requested max size...
             if (scaleOp != null) {
                 opList.remove(scaleOp);
             }
             Dimension scaledSize =
-                    Dimension.ofScaledArea(requestedSize, maxPixels);
+                    Dimension.ofScaledArea(CalculatedDimension, maxPixels);
             // The scale dimensions must be floored because rounding up could
             // cause max_pixels to be exceeded.
             scaleOp = new ScaleByPixels(
