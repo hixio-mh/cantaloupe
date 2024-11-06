@@ -43,12 +43,11 @@ public abstract class IIIFResource extends PublicResource {
         // after operations like cropping/region are applied.
         Operation cropOp = opList.getFirst(Crop.class);
         if (cropOp != null) {
+            // Crop arguments could be wrong or out of bounds
+            // and we might get an internal exception thrown on validate().
             cropOp.validate(requestedSize, opList.getScaleConstraint());
             requestedSize = cropOp.getResultingSize(requestedSize, opList.getScaleConstraint());
         }
-    
-        // Because we are evaluating Dimension here, chances are the arguments could be wrong
-        // and thus the dimension is 0 and we might get an internal exception thrown.
         if (maxPixels > 0 && requestedSize.intArea() > maxPixels) {
             Scale scaleOp = (Scale) opList.getFirst(Scale.class);
             // This should be null because the client requested max size...
