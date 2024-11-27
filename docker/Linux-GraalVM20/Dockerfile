@@ -1,4 +1,4 @@
-FROM ubuntu:lunar
+FROM ubuntu:noble
 
 ENV JAVA_HOME=/opt/graalvm-ce-java11-20.3.0
 ENV GRAALVM_HOME=/opt/graalvm-ce-java11-20.3.0
