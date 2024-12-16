@@ -1,8 +1,8 @@
 FROM ubuntu:noble
 
-ENV JAVA_HOME=/opt/graalvm-ce-java11-20.3.0
-ENV GRAALVM_HOME=/opt/graalvm-ce-java11-20.3.0
-ENV PATH=$PATH:/opt/graalvm-ce-java11-20.3.0/bin
+ENV JAVA_HOME=/opt/graalvm-ce-java11-22.2.0
+ENV GRAALVM_HOME=/opt/graalvm-ce-java11-22.2.0
+ENV PATH=$PATH:/opt/graalvm-ce-java11-22.2.0/bin
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -39,9 +39,9 @@ COPY dist/deps/Linux-x86-64/lib/* /usr/lib/
 #    && dpkg -i ./libgrokj2k1_7.6.5-1_amd64.deb \
 
 # Install GraalVM
-RUN wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-20.3.0/graalvm-ce-java11-linux-amd64-20.3.0.tar.gz \
-  && tar xfz graalvm-ce-java11-linux-amd64-20.3.0.tar.gz \
-  && mv graalvm-ce-java11-20.3.0 /opt
+RUN wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java11-linux-amd64-22.2.0.tar.gz \
+  && tar xfz graalvm-ce-java11-linux-amd64-22.2.0.tar.gz \
+  && mv graalvm-ce-java11-22.2.0 /opt
 
 # A non-root user is needed for some FilesystemSourceTest tests to work.
 ARG user=cantaloupe
