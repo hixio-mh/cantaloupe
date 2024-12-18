@@ -6,10 +6,8 @@ Processors section -> KakaduNativeProcessor section for setup steps.
 
 # License
 
-All of the software in this directory tree is distributed under a Kakadu Public
-Service License, which means that it may only be used for non-commercial
-purposes that are solely for the public good. See the
-[Kakadu License Terms](http://kakadusoftware.com/wp-content/uploads/2014/06/Kakadu-Licence-Terms-Feb-2018.pdf)
+All of the software in this directory tree is distributed under a Kakadu Evalutation License which is intended for an individual or organisation wishing to evaluate the Software with a view of procuring a longer term License Type. See the
+[Kakadu License Terms](https://kakadusoftware.com/wp-content/uploads/3451-3100-0598_1_Kakadu-Software-Licence-Terms-and-Conditions-FINAL-1-Sept-2021.pdf)
 document for detailed terms of use.
 
 # Build Info
