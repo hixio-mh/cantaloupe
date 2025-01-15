@@ -3,7 +3,6 @@
 #
 # docker compose -f path/to/compose.yaml up --exit-code-from cantaloupe
 #
-version: "3"
 services:
   cantaloupe:
     build:
