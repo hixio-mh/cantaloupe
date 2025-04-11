@@ -128,7 +128,7 @@ endpoint.api.enabled = false
 endpoint.api.username =
 endpoint.api.secret =
 
-# Enables the health check endpoint, at /health.
+# Enables the health check endpoint, at /health. (Requires endpoint.api.enabled = true)
 endpoint.health.enabled = true
 
 # If true, sources and caches will be checked, resulting in a more robust
