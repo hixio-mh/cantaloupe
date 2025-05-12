@@ -77,6 +77,10 @@ log_error_responses = false
 
 print_stack_trace_on_error_pages = true
 
+# If true, display the x-powered-by header. You may choose to disable this behavior
+# to prevent attackers from fingerprinting the server. Default value is true.
+headers.powered_by.display = true
+
 ###########################################################################
 # DELEGATE SCRIPT
 ###########################################################################
