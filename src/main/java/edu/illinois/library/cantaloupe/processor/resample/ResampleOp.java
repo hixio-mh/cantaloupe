@@ -311,7 +311,7 @@ public class ResampleOp extends AdvancedResizeOp {
 
     private void verticalFromWorkToDst(byte[][] workPixels, byte[] outPixels,
                                        int start, int delta) {
-        if (numChannels == 1) {
+        if (numChannels < 3) {
             verticalFromWorkToDstGray(workPixels, outPixels, start,
                     THREAD_COUNT);
             return;
@@ -354,7 +354,9 @@ public class ResampleOp extends AdvancedResizeOp {
 
     private void verticalFromWorkToDstGray(byte[][] workPixels, byte[] outPixels,
                                            int start, int delta) {
+        boolean useChannel1 = numChannels == 2;
         for (int x = start; x < destWidth; x += delta) {
+            final int xLocation = x * numChannels;
             for (int y = destHeight - 1; y >= 0; y--) {
                 final int yTimesNumContributors =
                         y * verticalSubsamplingData.numContributors;
@@ -362,15 +364,22 @@ public class ResampleOp extends AdvancedResizeOp {
                 final int sampleLocation = (y * destWidth + x);
 
                 float sample0 = 0.0f;
+                float sample1 = 0.0f;
                 int index = yTimesNumContributors;
                 for (int j = max - 1; j >= 0; j--) {
                     int valueLocation = verticalSubsamplingData.arrPixel[index];
                     float arrWeight = verticalSubsamplingData.arrWeight[index];
-                    sample0 += (workPixels[valueLocation][x] & 0xff) * arrWeight;
+                    sample0 += (workPixels[valueLocation][xLocation] & 0xff) * arrWeight;
+                    if (useChannel1) {
+                        sample1 += (workPixels[valueLocation][xLocation + 1] & 0xff) * arrWeight;
+                    }
                     index++;
                 }
 
                 outPixels[sampleLocation] = toByte(sample0);
+                if (useChannel1) {
+                    outPixels[sampleLocation + 1] = toByte(sample1);
+                }
             }
         }
     }
@@ -381,7 +390,7 @@ public class ResampleOp extends AdvancedResizeOp {
     private void horizontalFromSrcToWork(BufferedImage srcImg,
                                          byte[][] workPixels,
                                          int start, int delta) {
-        if (numChannels == 1) {
+        if (numChannels < 3) {
             horizontalFromSrcToWorkGray(srcImg, workPixels, start, delta);
             return;
         }
@@ -437,14 +446,17 @@ public class ResampleOp extends AdvancedResizeOp {
         // values
         final int[] tempPixels = new int[srcWidth];
         // Create reusable row to minimize memory overhead.
-        final byte[] srcPixels = new byte[srcWidth];
+        final byte[] srcPixels = new byte[srcWidth * numChannels];
+        final boolean useChannel1 = numChannels == 2 ;
 
         for (int k = start; k < srcHeight; k = k + delta) {
             ImageUtils.readPixelsBGR(srcImage, k, srcWidth, srcPixels, tempPixels);
 
             for (int i = destWidth - 1; i >= 0; i--) {
+                int sampleLocation = i * numChannels;
                 final int max = horizontalSubsamplingData.arrN[i];
                 float sample0 = 0.0f;
+                float sample1 = 0.0f;
                 int index = i * horizontalSubsamplingData.numContributors;
 
                 for (int j = max - 1; j >= 0; j--) {
@@ -452,10 +464,16 @@ public class ResampleOp extends AdvancedResizeOp {
                     int pixelIndex = horizontalSubsamplingData.arrPixel[index];
 
                     sample0 += (srcPixels[pixelIndex] & 0xff) * arrWeight;
+                    if (useChannel1) {
+                        sample1 += (srcPixels[pixelIndex + 1] & 0xff) * arrWeight;
+                    }
                     index++;
                 }
 
-                workPixels[k][i] = toByte(sample0);
+                workPixels[k][sampleLocation] = toByte(sample0);
+                if (useChannel1) {
+                    workPixels[k][sampleLocation + 1] = toByte(sample1);
+                }
             }
         }
     }
