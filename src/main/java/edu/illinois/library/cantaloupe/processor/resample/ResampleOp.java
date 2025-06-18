@@ -226,13 +226,6 @@ public class ResampleOp extends AdvancedResizeOp {
             srcImage = ImageUtils.convert(srcImage, srcImage.getColorModel().hasAlpha() ?
                     BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR);
         }
-
-       /*if (srcImage.getType() == BufferedImage.TYPE_CUSTOM &&  srcImage.getSampleModel().getNumBands() == 2) {
-            srcImage = ImageUtils.convert(srcImage, srcImage.getColorModel().hasAlpha() ?
-                    BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR);
-        }*/
-
-
         this.numChannels = srcImage.getSampleModel().getNumBands();
         assert numChannels > 0;
         this.srcWidth = srcImage.getWidth();
@@ -361,7 +354,7 @@ public class ResampleOp extends AdvancedResizeOp {
 
     private void verticalFromWorkToDstGray(byte[][] workPixels, byte[] outPixels,
                                            int start, int delta) {
-        boolean useChannel1 = false;
+        boolean useChannel1 = numChannels == 2;
         for (int x = start; x < destWidth; x += delta) {
             final int xLocation = x * numChannels;
             for (int y = destHeight - 1; y >= 0; y--) {
@@ -454,7 +447,7 @@ public class ResampleOp extends AdvancedResizeOp {
         final int[] tempPixels = new int[srcWidth];
         // Create reusable row to minimize memory overhead.
         final byte[] srcPixels = new byte[srcWidth * numChannels];
-        boolean useChannel1 = false;
+        final boolean useChannel1 = numChannels == 2 ;
 
         for (int k = start; k < srcHeight; k = k + delta) {
             ImageUtils.readPixelsBGR(srcImage, k, srcWidth, srcPixels, tempPixels);
@@ -462,13 +455,13 @@ public class ResampleOp extends AdvancedResizeOp {
             for (int i = destWidth - 1; i >= 0; i--) {
                 int sampleLocation = i * numChannels;
                 final int max = horizontalSubsamplingData.arrN[i];
-
                 float sample0 = 0.0f;
                 float sample1 = 0.0f;
                 int index = i * horizontalSubsamplingData.numContributors;
+
                 for (int j = max - 1; j >= 0; j--) {
                     float arrWeight = horizontalSubsamplingData.arrWeight[index];
-                    int pixelIndex = horizontalSubsamplingData.arrPixel[index] * numChannels;
+                    int pixelIndex = horizontalSubsamplingData.arrPixel[index];
 
                     sample0 += (srcPixels[pixelIndex] & 0xff) * arrWeight;
                     if (useChannel1) {
