@@ -23,11 +23,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libgrokj2k1 \
   grokj2k-tools \
   adduser \
+  libturbojpeg \
+  libturbojpeg-dev \ 
   && rm -rf /var/lib/apt/lists/*
-
-# Install TurboJpegProcessor dependencies
-RUN mkdir -p /opt/libjpeg-turbo/lib
-COPY docker/image_files/libjpeg-turbo/lib64 /opt/libjpeg-turbo/lib
 
 # Install KakaduNativeProcessor dependencies
 COPY dist/deps/Linux-x86-64/lib/* /usr/lib/
