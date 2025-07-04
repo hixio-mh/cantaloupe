@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, ubuntu-22.04]
         java: [jdk17, jdk21, jdk22, graalvm]
       fail-fast: false
     steps:
@@ -28,6 +28,10 @@ jobs:
       - name: Test in Linux GraalVM
         if: matrix.os == 'ubuntu-latest' && matrix.java == 'graalvm'
         run: docker compose -f docker/Linux-GraalVM-JDK21/compose.yaml up --build --exit-code-from cantaloupe
+     # Only test one java version on Jammy   
+      - name: Test in Ubuntu Jammy
+        if: matrix.os == 'ubuntu-latest' && matrix.java == 'jdk21'
+        run: docker compose -f docker/ubuntu/jammy/compose.yaml up --build --exit-code-from cantaloupe
       - name: Test in Windows JDK 17 (LTS)
         if: matrix.os == 'windows-latest' && matrix.java == 'jdk17'
         run: docker compose -f docker/Windows-JDK17/compose.yaml up --build --exit-code-from cantaloupe
