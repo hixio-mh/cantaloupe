@@ -42,7 +42,7 @@ RUN wget -q https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4
   && mv jdk-22.0.2 /opt/jdk \
   # Install a newer Maven than the one in apt
   && wget -q https://dlcdn.apache.org/maven/maven-3/3.8.9/binaries/apache-maven-3.8.9-bin.tar.gz \
-  && tar xfz apache-maven-3.8.8-bin.tar.gz \
+  && tar xfz apache-maven-3.8.9-bin.tar.gz \
   && mv apache-maven-3.8.9 /opt/maven \
   && rm apache-maven-3.8.9-bin.tar.gz
 
