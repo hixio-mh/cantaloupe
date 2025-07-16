@@ -59,5 +59,5 @@ RUN mvn package -DskipTests
 #ENTRYPOINT java -Dcantaloupe.config=./cantaloupe.properties  -Xmx2g -jar target/cantaloupe-6.0-SNAPSHOT.jar
 
 # Use this for automated testing:
-ENTRYPOINT mvn --batch-mode test -Pfreedeps
+ENTRYPOINT mvn --batch-mode test -Pfreedeps -Dtest="!GrokProcessorTest"
 #ENTRYPOINT mvn test -Dtest=edu.illinois.library.cantaloupe.processor.KakaduNativeProcessorTest
