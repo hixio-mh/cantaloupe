@@ -41,10 +41,10 @@ RUN wget -q https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4
   && tar xfz openjdk-22.0.2_linux-x64_bin.tar.gz \
   && mv jdk-22.0.2 /opt/jdk \
   # Install a newer Maven than the one in apt
-  && wget -q https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz \
-  && tar xfz apache-maven-3.8.8-bin.tar.gz \
-  && mv apache-maven-3.8.8 /opt/maven \
-  && rm apache-maven-3.8.8-bin.tar.gz
+  && wget -q https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz \
+  && tar xfz apache-maven-3.9.11-bin.tar.gz \
+  && mv apache-maven-3.9.11 /opt/maven \
+  && rm apache-maven-3.9.11-bin.tar.gz
 
 # A non-root user is needed for some FilesystemSourceTest tests to work.
 ARG user=cantaloupe
