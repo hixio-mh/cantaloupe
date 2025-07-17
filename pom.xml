@@ -425,7 +425,7 @@
                     <reuseForks>false</reuseForks>
                     <!-- JAI requires this in JDK >= 16. -->
                     <!-- JAI requires this in JDK 16+. It should be removed when JAI is. -->
-                    <argLine>--illegal-access=permit --add-opens java.desktop/sun.awt.image=ALL-UNNAMED</argLine>
+                    <argLine>--add-opens java.desktop/sun.awt.image=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
 
