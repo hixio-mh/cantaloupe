@@ -50,14 +50,15 @@ COPY ./pom.xml pom.xml
 RUN mvn --quiet dependency:resolve
 
 # Copy the code
-COPY --chown=cantaloupe ./docker/image_files/test.properties test.properties
-COPY --chown=cantaloupe . .
-
-RUN mvn package -DskipTests
+COPY --chown=cantaloupe docker/image_files/test.properties test.properties
+COPY --chown=cantaloupe ./src src
 
 # Use this to run directly from docker:
+#COPY --chown=cantaloupe . .
+#RUN mvn package -DskipTests
 #ENTRYPOINT java -Dcantaloupe.config=./cantaloupe.properties  -Xmx2g -jar target/cantaloupe-6.0-SNAPSHOT.jar
 
 # Use this for automated testing:
 ENTRYPOINT mvn --batch-mode test -Pfreedeps -Dtest="!GrokProcessorTest"
-#ENTRYPOINT mvn test -Dtest=edu.illinois.library.cantaloupe.processor.KakaduNativeProcessorTest
+
+#ENTRYPOINT mvn test -e -Dtest=edu.illinois.library.cantaloupe.perf.processor.codec.bmp.BMPImageReaderPerformance
