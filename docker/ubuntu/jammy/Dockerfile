@@ -16,7 +16,6 @@ RUN apt-get install -y --no-install-recommends \
   ca-certificates \
   ffmpeg \
   wget \
- # libopenjp2-tools \
   liblcms2-dev \
   libpng-dev \
   libzstd-dev \
@@ -31,8 +30,10 @@ RUN apt-get install -y --no-install-recommends \
   #libgrokj2k1 \
  # grokj2k-tools \
   libturbojpeg \
-  libturbojpeg-dev
+  libturbojpeg-dev 
 
+RUN apt-get install -y libopenjp2-tools 
+  
 RUN rm -rf /var/lib/apt/lists/*
 
 # Install KakaduNativeProcessor dependencies
@@ -59,6 +60,6 @@ COPY --chown=cantaloupe ./src src
 #ENTRYPOINT java -Dcantaloupe.config=./cantaloupe.properties  -Xmx2g -jar target/cantaloupe-6.0-SNAPSHOT.jar
 
 # Use this for automated testing:
-ENTRYPOINT mvn --batch-mode test -Pfreedeps -Dtest="!GrokProcessorTest"
+ENTRYPOINT mvn --batch-mode test -Pfreedeps -Dtest="!GrokProcessorTest,!Azure*Test"
 
 #ENTRYPOINT mvn test -e -Dtest=edu.illinois.library.cantaloupe.perf.processor.codec.bmp.BMPImageReaderPerformance
