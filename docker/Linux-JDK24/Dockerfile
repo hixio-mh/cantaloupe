@@ -35,9 +35,9 @@ COPY dist/deps/Linux-x86-64/lib/* /usr/lib/
 
 # Install various other dependencies that aren't in apt
 # Install OpenJDK
-RUN wget -q https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz \
-  && tar xfz openjdk-22.0.2_linux-x64_bin.tar.gz \
-  && mv jdk-22.0.2 /opt/jdk \
+RUN wget -q https://download.java.net/java/GA/jdk24.0.2/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-24.0.2_linux-x64_bin.tar.gz \
+  && tar xfz openjdk-24.0.2_linux-x64_bin.tar.gz \
+  && mv jdk-24.0.2 /opt/jdk \
   # Install a newer Maven than the one in apt
   && wget -q https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz \
   && tar xfz apache-maven-3.9.11-bin.tar.gz \
