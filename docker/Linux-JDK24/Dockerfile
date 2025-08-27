@@ -33,6 +33,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install KakaduNativeProcessor dependencies
 COPY dist/deps/Linux-x86-64/lib/* /usr/lib/
 
+# Ensure libturbojpeg can be found
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}
+
 # Install various other dependencies that aren't in apt
 # Install OpenJDK
 RUN wget -q https://download.java.net/java/GA/jdk24.0.2/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-24.0.2_linux-x64_bin.tar.gz \
@@ -61,3 +64,5 @@ COPY --chown=cantaloupe docker/image_files/test.properties test.properties
 COPY --chown=cantaloupe ./src src
 
 ENTRYPOINT mvn --batch-mode test -Pfreedeps
+# Run individual test
+# ENTRYPOINT mvn test -e -Dtest=edu.illinois.library.cantaloupe.processor.codec.jpeg.TurboJPEGImageReaderTest
