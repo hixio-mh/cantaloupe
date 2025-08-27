@@ -30,6 +30,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install KakaduNativeProcessor dependencies
 COPY dist/deps/Linux-x86-64/lib/* /usr/lib/
 
+# Ensure libturbojpeg can be found
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}
+
 # Install GrokProcessor dependencies
 #RUN wget -q https://github.com/GrokImageCompression/grok/releases/download/v7.6.5/libgrokj2k1_7.6.5-1_amd64.deb \
 #    && wget -q https://github.com/GrokImageCompression/grok/releases/download/v7.6.5/grokj2k-tools_7.6.5-1_amd64.deb \
@@ -56,5 +59,4 @@ RUN mvn --quiet dependency:resolve
 COPY --chown=cantaloupe docker/image_files/test.properties test.properties
 COPY --chown=cantaloupe ./src src
 
-#ENTRYPOINT mvn --batch-mode test -Pfreedeps
-ENTRYPOINT mvn test -e -Dtest=edu.illinois.library.cantaloupe.processor.codec.jpeg.TurboJPEGImageReader
+ENTRYPOINT mvn --batch-mode test -Pfreedeps
