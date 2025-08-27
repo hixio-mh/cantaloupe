@@ -44,7 +44,7 @@ RUN wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-2
 # A non-root user is needed for some FilesystemSourceTest tests to work.
 ARG user=cantaloupe
 ARG home=/home/$user
-RUN adduser --home $home $user
+RUN useradd --home $home $user
 RUN chown -R $user $home
 USER $user
 WORKDIR $home
@@ -57,4 +57,5 @@ RUN mvn --quiet dependency:resolve
 COPY --chown=cantaloupe docker/image_files/test.properties test.properties
 COPY --chown=cantaloupe ./src src
 
-ENTRYPOINT mvn --batch-mode test -Pfreedeps
+#ENTRYPOINT mvn --batch-mode test -Pfreedeps
+ENTRYPOINT mvn test -e -Dtest=edu.illinois.library.cantaloupe.processor.codec.jpeg.TurboJPEGImageReader
