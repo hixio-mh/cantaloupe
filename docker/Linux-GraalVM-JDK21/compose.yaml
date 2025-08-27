@@ -5,6 +5,7 @@
 #
 services:
   cantaloupe:
+    platform: linux/amd64
     build:
       context: ../../
       dockerfile: $PWD/docker/Linux-GraalVM-JDK21/Dockerfile
