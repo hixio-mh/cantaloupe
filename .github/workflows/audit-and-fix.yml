@@ -1,0 +1,52 @@
+name: Repository Health Check
+on:
+  push:
+    branches:
+      - main
+      - master
+  schedule:
+    - cron: '0 0 * * 1' # Runs every Monday at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  audit-and-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # To get all branches
+
+      - name: Check for Code of Conduct
+        id: check_file
+        run: |
+          if [ ! -f "CODE_OF_CONDUCT.md" ]; then
+            echo "CODE_OF_CONDUCT.md not found. Will create a PR."
+            echo "::set-output name=file_exists::false"
+          else
+            echo "CODE_OF_CONDUCT.md found. No action needed."
+            echo "::set-output name=file_exists::true"
+          fi
+
+      - name: Create new branch and file
+        if: steps.check_file.outputs.file_exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b chore/add-code-of-conduct
+          curl -o CODE_OF_CONDUCT.md https://raw.githubusercontent.com/github/docs/main/.github/CODE_OF_CONDUCT.md
+          git add CODE_OF_CONDUCT.md
+          git commit -m "chore: Add Code of Conduct"
+
+      - name: Create Pull Request
+        if: steps.check_file.outputs.file_exists == 'false'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: Add Code of Conduct"
+          title: "Chore: Add a Code of Conduct"
+          body: |
+            This pull request automatically adds a `CODE_OF_CONDUCT.md` file to the repository.
+            This helps set behavioral expectations for our community.
+          branch: chore/add-code-of-conduct
+          base: ${{ github.ref }}
